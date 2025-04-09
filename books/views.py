@@ -1,5 +1,5 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from .models import BookListing, Category, Genre
@@ -34,3 +34,11 @@ class CategoryListView(generics.ListAPIView):
 class GenreListView(generics.ListAPIView):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+
+class AllBookListingsView(generics.ListAPIView):
+    serializer_class = BookListingSerializer
+    permission_classes = [AllowAny]  # Доступно всем, даже неавторизованным (можно изменить на IsAuthenticated)
+
+    def get_queryset(self):
+        # Возвращаем все объявления
+        return BookListing.objects.all()
