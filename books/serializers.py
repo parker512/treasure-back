@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import BookListing, Category, Genre
 from media.models import Photo  # Импортируем модель Photo
+from users.serializers import UserSerializer
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,3 +44,17 @@ class BookListingSerializer(serializers.ModelSerializer):
             'created_at', 'location'
         ]
         read_only_fields = ['user', 'created_at', 'location']  # Эти поля не требуются в запросе
+
+
+class BookDetailSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)  # Вложенный сериализатор пользователя
+    photo_detail = PhotoSerializer(source='photo', read_only=True)
+    category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(read_only=True)
+
+    class Meta:
+        model = BookListing
+        fields = [
+            'id', 'title', 'description', 'price', 'photo_detail',
+            'category', 'genre', 'user', 'created_at', 'location'
+        ]

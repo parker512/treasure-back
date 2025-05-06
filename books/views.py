@@ -4,6 +4,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import BookListing, Category, Genre
 from .serializers import BookListingSerializer, CategorySerializer, GenreSerializer
+from rest_framework import generics
+from .models import BookListing
+from .serializers import BookDetailSerializer, BookListingSerializer
+from users.serializers import UserSerializer
+from users.models import CustomUser
+from rest_framework.response import Response
+from rest_framework import status
+
 
 class BookListingCreateView(generics.CreateAPIView):
     serializer_class = BookListingSerializer
@@ -42,3 +50,34 @@ class AllBookListingsView(generics.ListAPIView):
     def get_queryset(self):
         # Возвращаем все объявления
         return BookListing.objects.all()
+    
+# Получить одно объявление + пользователя
+class BookDetailView(generics.RetrieveAPIView):
+    queryset = BookListing.objects.all()
+    serializer_class = BookDetailSerializer
+    lookup_field = 'id'  # По id обьявления
+    permission_classes = [AllowAny]
+
+# Получить все объявления пользователя
+class UserBookListingsView(generics.ListAPIView):
+    serializer_class = BookListingSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        return BookListing.objects.filter(user_id=user_id)
+
+    def list(self, request, *args, **kwargs):
+        user_id = self.kwargs.get('user_id')
+        try:
+            user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            return Response({"detail": "Пользователь не найден"}, status=status.HTTP_404_NOT_FOUND)
+
+        listings = self.get_queryset()
+        user_data = UserSerializer(user).data
+        listings_data = BookListingSerializer(listings, many=True).data
+
+        return Response({
+            "user": user_data,
+            "listings": listings_data
+        })
