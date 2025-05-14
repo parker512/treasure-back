@@ -22,6 +22,7 @@ class BookListingSerializer(serializers.ModelSerializer):
     # Поле photo ожидает ID при создании, но отображает данные Photo
     photo = serializers.PrimaryKeyRelatedField(queryset=Photo.objects.all(), write_only=True)
     photo_detail = PhotoSerializer(source='photo', read_only=True)  # Для отображения деталей фото
+    condition = serializers.ChoiceField(choices=BookListing.CONDITION_CHOICES)
 
     # Поля category и genre отображаем с деталями
     category = CategorySerializer(read_only=True)
@@ -41,20 +42,24 @@ class BookListingSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'description', 'price', 'photo', 'photo_detail',
             'category', 'category_id', 'genre', 'genre_id', 'user',
-            'created_at', 'location'
+            'created_at', 'location', 'condition'
         ]
-        read_only_fields = ['user', 'created_at', 'location']  # Эти поля не требуются в запросе
+        read_only_fields = ['user', 'created_at', 'location']
 
 
 class BookDetailSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)  # Вложенный сериализатор пользователя
+    user = UserSerializer(read_only=True)
     photo_detail = PhotoSerializer(source='photo', read_only=True)
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(read_only=True)
+
+    # Добавь это, если хочешь показывать "Нова" / "Б/У", а не "new" / "used"
+    condition = serializers.CharField(source='get_condition_display', read_only=True)
 
     class Meta:
         model = BookListing
         fields = [
             'id', 'title', 'description', 'price', 'photo_detail',
-            'category', 'genre', 'user', 'created_at', 'location'
+            'category', 'genre', 'user', 'created_at',
+            'condition', 'location'  # <-- добавлены
         ]

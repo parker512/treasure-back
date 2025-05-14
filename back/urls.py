@@ -9,6 +9,7 @@ urlpatterns = [
     path('api/auth/', include('users.urls')),
     path('api/books/', include('books.urls')),  # Подключаем маршруты для книг
      path('api/media/', include('media.urls')),
+
 ]
 
 if settings.DEBUG:
