@@ -5,6 +5,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-3*^0dzwgiz89)z1m@79228&9owai83f9wbnv4dwooxgv2o^h7j'
 
+PAYPAL_MODE = 'sandbox'  # Use 'live' for production
+PAYPAL_CLIENT_ID = 'AQ0yDqLrsHwYQQ7lyM-KXuB9RRxK7ihNH9Kx2t_umEOTchJSGB7IfyET0ZpJbvFa5QEbfPgC0DV_vNVh'  # Replace with your Sandbox Client ID
+PAYPAL_CLIENT_SECRET = 'EOg2f0f1gcQgMZG9gqfD1kIDgPqMr8bMwN4IBIUvXsG6HvwL1KXgxw4_VFhM-EAxWClv_jS0bbuZRy3E'  #
+
+# Platform commission percentage (e.g., 5%)
+PLATFORM_COMMISSION_PERCENT = 5.0
+
+# Time limits for seller and buyer actions
+SELLER_CONFIRMATION_HOURS = 24
+BUYER_CONFIRMATION_DAYS = 7
+
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -25,7 +44,7 @@ INSTALLED_APPS = [
     'users',
     'books',
     'media',
-    
+    'django_celery_beat',
 ]
 
 ASGI_APPLICATION = 'back.asgi.application'
