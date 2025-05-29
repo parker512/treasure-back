@@ -15,6 +15,8 @@ from .serializers import BookListingSerializer, BookDetailSerializer, CategorySe
 from .utils import configure_paypal
 from django.conf import settings
 from users.models import CustomUser
+from users.serializers import UserSerializer
+
 
 # Existing views (unchanged)
 class BookListingCreateView(generics.CreateAPIView):
