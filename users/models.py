@@ -26,6 +26,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=20, null=False, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    avatar = models.ForeignKey(
+    "media.Photo",
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name="user_avatars"
+    )
 
     objects = CustomUserManager()
 
