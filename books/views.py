@@ -16,6 +16,8 @@ from .utils import configure_paypal
 from django.conf import settings
 from users.models import CustomUser
 from users.serializers import UserSerializer
+from .models import Favorite
+from .serializers import FavoriteSerializer
 
 
 # Existing views (unchanged)
@@ -383,3 +385,29 @@ class BuyerDisputeView(APIView):
         transaction.status = 'DISPUTED'
         transaction.save()
         return Response({"message": "Суперечка открыта, ожидайте решения администратора"}, status=status.HTTP_200_OK)
+    
+class FavoriteListCreateView(generics.ListCreateAPIView):
+    serializer_class = FavoriteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class FavoriteDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, book_listing_id):
+        try:
+            favorite = Favorite.objects.get(
+                user=request.user, book_listing_id=book_listing_id
+            )
+            favorite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Favorite.DoesNotExist:
+            return Response(
+                {"detail": "Объявление не найдено в избранном"},
+                status=status.HTTP_404_NOT_FOUND
+            )

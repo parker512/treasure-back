@@ -4,7 +4,7 @@ from .views import (
     BookListingCreateView, BookListingListView, CategoryListView, GenreListView,
     AllBookListingsView, BookDetailView, UserBookListingsView, BookListingUpdateView,
     BookListingDeleteView, InitiatePaymentView, ExecutePaymentView, CancelPaymentView,
-    SellerConfirmShipmentView, BuyerConfirmReceiptView, BuyerDisputeView, SellerTransactionsView, BuyerTransactionsView
+    SellerConfirmShipmentView, BuyerConfirmReceiptView, BuyerDisputeView, SellerTransactionsView, BuyerTransactionsView, FavoriteListCreateView, FavoriteDeleteView
 )
 
 urlpatterns = [
@@ -25,4 +25,6 @@ urlpatterns = [
     path('transaction/<int:transaction_id>/dispute/', BuyerDisputeView.as_view(), name='buyer-dispute'),
     path('seller/transactions/', SellerTransactionsView.as_view(), name='seller-transactions'),
     path('buyer/transactions/', BuyerTransactionsView.as_view(), name='buyer-transactions'),
+    path('favorites/', FavoriteListCreateView.as_view(), name='favorite-list-create'),
+    path('favorites/<int:book_listing_id>/', FavoriteDeleteView.as_view(), name='favorite-delete'),
 ]
